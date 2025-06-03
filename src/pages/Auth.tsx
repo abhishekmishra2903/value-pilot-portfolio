@@ -34,6 +34,7 @@ const Auth = () => {
     const { error } = await signIn(signInData.email, signInData.password);
 
     if (error) {
+      console.error('Sign in error:', error);
       toast({
         title: "Sign In Error",
         description: error.message,
@@ -54,7 +55,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signUp(
+    const { error, data } = await signUp(
       signUpData.email,
       signUpData.password,
       signUpData.firstName,
@@ -62,16 +63,26 @@ const Auth = () => {
     );
 
     if (error) {
+      console.error('Sign up error:', error);
       toast({
         title: "Sign Up Error",
         description: error.message,
         variant: "destructive",
       });
     } else {
-      toast({
-        title: "Account Created!",
-        description: "Please check your email to verify your account.",
-      });
+      console.log('Sign up successful:', data);
+      
+      if (data.user && !data.user.email_confirmed_at) {
+        toast({
+          title: "Check Your Email",
+          description: "Please check your email and click the verification link to complete your registration.",
+        });
+      } else {
+        toast({
+          title: "Account Created!",
+          description: "Your account has been created successfully. You can now sign in.",
+        });
+      }
     }
 
     setIsLoading(false);
@@ -179,10 +190,11 @@ const Auth = () => {
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Create a password"
+                      placeholder="Create a password (min 6 characters)"
                       value={signUpData.password}
                       onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                       required
+                      minLength={6}
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={isLoading}>
