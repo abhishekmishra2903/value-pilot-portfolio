@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { usePortfolio, Asset } from '@/context/PortfolioContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,54 +6,52 @@ import AssetCard from '@/components/AssetCard';
 import PerformanceChart from '@/components/PerformanceChart';
 import AssetAllocationChart, { AssetAllocation } from '@/components/AssetAllocationChart';
 import { Skeleton } from '@/components/ui/skeleton';
-
 const Dashboard = () => {
-  const { assets, totalValue, generatePerformanceData, loading } = usePortfolio();
-  
+  const {
+    assets,
+    totalValue,
+    generatePerformanceData,
+    loading
+  } = usePortfolio();
+
   // Create allocation data for the pie chart
   const getAllocationData = (): AssetAllocation[] => {
-    const stocksValue = assets
-      .filter(asset => asset.assetType === 'stock')
-      .reduce((sum, asset) => sum + asset.value, 0);
-      
-    const cryptoValue = assets
-      .filter(asset => asset.assetType === 'crypto')
-      .reduce((sum, asset) => sum + asset.value, 0);
-      
-    const fundsValue = assets
-      .filter(asset => asset.assetType === 'fund')
-      .reduce((sum, asset) => sum + asset.value, 0);
-    
-    return [
-      { name: 'Stocks', value: stocksValue, color: '#3b82f6' },
-      { name: 'Crypto', value: cryptoValue, color: '#8b5cf6' },
-      { name: 'Funds', value: fundsValue, color: '#f59e0b' }
-    ];
+    const stocksValue = assets.filter(asset => asset.assetType === 'stock').reduce((sum, asset) => sum + asset.value, 0);
+    const cryptoValue = assets.filter(asset => asset.assetType === 'crypto').reduce((sum, asset) => sum + asset.value, 0);
+    const fundsValue = assets.filter(asset => asset.assetType === 'fund').reduce((sum, asset) => sum + asset.value, 0);
+    return [{
+      name: 'Stocks',
+      value: stocksValue,
+      color: '#3b82f6'
+    }, {
+      name: 'Crypto',
+      value: cryptoValue,
+      color: '#8b5cf6'
+    }, {
+      name: 'Funds',
+      value: fundsValue,
+      color: '#f59e0b'
+    }];
   };
-  
+
   // Get top performers
   const getTopPerformers = (): Asset[] => {
-    return [...assets]
-      .sort((a, b) => b.change - a.change)
-      .slice(0, 3);
+    return [...assets].sort((a, b) => b.change - a.change).slice(0, 3);
   };
-  
+
   // Get overall performance data
   const performanceData = generatePerformanceData();
-  
+
   // Calculate overall change percentage
   const calculateOverallChange = () => {
     if (!performanceData.length) return 0;
     const firstValue = performanceData[0]?.value || 0;
     const lastValue = performanceData[performanceData.length - 1]?.value || 0;
-    return ((lastValue - firstValue) / firstValue) * 100;
+    return (lastValue - firstValue) / firstValue * 100;
   };
-  
   const overallChange = calculateOverallChange();
-  
   if (loading) {
-    return (
-      <div className="space-y-6">
+    return <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Skeleton className="h-32" />
           <Skeleton className="h-32" />
@@ -62,12 +59,9 @@ const Dashboard = () => {
           <Skeleton className="h-32" />
         </div>
         <Skeleton className="h-[400px]" />
-      </div>
-    );
+      </div>;
   }
-  
-  return (
-    <div className="space-y-6">
+  return <div className="This div is overlapping over the left pane in all the pages. Fix that\n">
       {/* Portfolio Value Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
@@ -92,10 +86,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              ${assets
-                .filter(asset => asset.assetType === 'stock')
-                .reduce((sum, asset) => sum + asset.value, 0)
-                .toLocaleString()}
+              ${assets.filter(asset => asset.assetType === 'stock').reduce((sum, asset) => sum + asset.value, 0).toLocaleString()}
             </div>
             <div className="mt-1 text-sm text-muted-foreground">
               {assets.filter(asset => asset.assetType === 'stock').length} holdings
@@ -111,10 +102,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
-              ${assets
-                .filter(asset => asset.assetType === 'crypto')
-                .reduce((sum, asset) => sum + asset.value, 0)
-                .toLocaleString()}
+              ${assets.filter(asset => asset.assetType === 'crypto').reduce((sum, asset) => sum + asset.value, 0).toLocaleString()}
             </div>
             <div className="mt-1 text-sm text-muted-foreground">
               {assets.filter(asset => asset.assetType === 'crypto').length} holdings
@@ -130,10 +118,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-amber-600">
-              ${assets
-                .filter(asset => asset.assetType === 'fund')
-                .reduce((sum, asset) => sum + asset.value, 0)
-                .toLocaleString()}
+              ${assets.filter(asset => asset.assetType === 'fund').reduce((sum, asset) => sum + asset.value, 0).toLocaleString()}
             </div>
             <div className="mt-1 text-sm text-muted-foreground">
               {assets.filter(asset => asset.assetType === 'fund').length} holdings
@@ -150,10 +135,7 @@ const Dashboard = () => {
               <CardTitle>Portfolio Performance</CardTitle>
             </CardHeader>
             <CardContent>
-              <PerformanceChart 
-                data={performanceData} 
-                title="30 Day Performance" 
-              />
+              <PerformanceChart data={performanceData} title="30 Day Performance" />
             </CardContent>
           </Card>
         </div>
@@ -176,18 +158,7 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {getTopPerformers().map((asset) => (
-              <AssetCard 
-                key={asset.id} 
-                name={asset.name} 
-                symbol={asset.symbol}
-                value={asset.value}
-                change={asset.change}
-                shares={asset.shares}
-                price={asset.price}
-                assetType={asset.assetType}
-              />
-            ))}
+            {getTopPerformers().map(asset => <AssetCard key={asset.id} name={asset.name} symbol={asset.symbol} value={asset.value} change={asset.change} shares={asset.shares} price={asset.price} assetType={asset.assetType} />)}
           </div>
         </CardContent>
       </Card>
@@ -203,80 +174,28 @@ const Dashboard = () => {
         
         <TabsContent value="all" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {assets.map((asset) => (
-              <AssetCard 
-                key={asset.id} 
-                name={asset.name} 
-                symbol={asset.symbol}
-                value={asset.value}
-                change={asset.change}
-                shares={asset.shares}
-                price={asset.price}
-                assetType={asset.assetType}
-              />
-            ))}
+            {assets.map(asset => <AssetCard key={asset.id} name={asset.name} symbol={asset.symbol} value={asset.value} change={asset.change} shares={asset.shares} price={asset.price} assetType={asset.assetType} />)}
           </div>
         </TabsContent>
         
         <TabsContent value="stocks" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {assets
-              .filter(asset => asset.assetType === 'stock')
-              .map((asset) => (
-                <AssetCard 
-                  key={asset.id} 
-                  name={asset.name} 
-                  symbol={asset.symbol}
-                  value={asset.value}
-                  change={asset.change}
-                  shares={asset.shares}
-                  price={asset.price}
-                  assetType={asset.assetType}
-                />
-              ))}
+            {assets.filter(asset => asset.assetType === 'stock').map(asset => <AssetCard key={asset.id} name={asset.name} symbol={asset.symbol} value={asset.value} change={asset.change} shares={asset.shares} price={asset.price} assetType={asset.assetType} />)}
           </div>
         </TabsContent>
         
         <TabsContent value="crypto" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {assets
-              .filter(asset => asset.assetType === 'crypto')
-              .map((asset) => (
-                <AssetCard 
-                  key={asset.id} 
-                  name={asset.name} 
-                  symbol={asset.symbol}
-                  value={asset.value}
-                  change={asset.change}
-                  shares={asset.shares}
-                  price={asset.price}
-                  assetType={asset.assetType}
-                />
-              ))}
+            {assets.filter(asset => asset.assetType === 'crypto').map(asset => <AssetCard key={asset.id} name={asset.name} symbol={asset.symbol} value={asset.value} change={asset.change} shares={asset.shares} price={asset.price} assetType={asset.assetType} />)}
           </div>
         </TabsContent>
         
         <TabsContent value="funds" className="mt-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {assets
-              .filter(asset => asset.assetType === 'fund')
-              .map((asset) => (
-                <AssetCard 
-                  key={asset.id} 
-                  name={asset.name} 
-                  symbol={asset.symbol}
-                  value={asset.value}
-                  change={asset.change}
-                  shares={asset.shares}
-                  price={asset.price}
-                  assetType={asset.assetType}
-                />
-              ))}
+            {assets.filter(asset => asset.assetType === 'fund').map(asset => <AssetCard key={asset.id} name={asset.name} symbol={asset.symbol} value={asset.value} change={asset.change} shares={asset.shares} price={asset.price} assetType={asset.assetType} />)}
           </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
