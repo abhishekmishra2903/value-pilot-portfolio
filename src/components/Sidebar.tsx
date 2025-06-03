@@ -1,77 +1,56 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, LayoutDashboard, Briefcase, BarChart3, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import {
+  BarChart3,
+  PieChart,
+  TrendingUp,
+  FileText,
+  Wallet,
+  Home,
+} from 'lucide-react';
+
+const navigation = [
+  { name: 'Dashboard', href: '/', icon: Home },
+  { name: 'My Investments', href: '/investments', icon: Wallet },
+  { name: 'Holdings', href: '/holdings', icon: PieChart },
+  { name: 'Performance', href: '/performance', icon: TrendingUp },
+  { name: 'Reports', href: '/reports', icon: FileText },
+];
 
 const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
-
-  const navItems = [
-    { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
-    { name: 'Holdings', path: '/holdings', icon: <Briefcase size={20} /> },
-    { name: 'Performance', path: '/performance', icon: <BarChart3 size={20} /> },
-    { name: 'Reports', path: '/reports', icon: <FileText size={20} /> },
-  ];
-
   return (
-    <div
-      className={cn(
-        'h-screen sticky top-0 bg-sidebar transition-all duration-300',
-        collapsed ? 'w-16' : 'w-64'
-      )}
-    >
-      <div className="flex items-center justify-between p-4 text-sidebar-foreground">
-        <div className={cn('flex items-center', collapsed && 'justify-center w-full')}>
-          {!collapsed && (
-            <span className="text-xl font-bold ml-2">ValuePilot</span>
-          )}
-          {collapsed && (
-            <span className="text-xl font-bold">VP</span>
-          )}
+    <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+      <div className="flex flex-col flex-grow bg-slate-900 pt-5 overflow-y-auto">
+        <div className="flex items-center flex-shrink-0 px-4">
+          <BarChart3 className="h-8 w-8 text-emerald-400" />
+          <span className="ml-2 text-xl font-bold text-white">ValuePilot</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground"
-        >
-          <ChevronLeft className={cn(
-            'h-5 w-5 transition-all',
-            collapsed && 'rotate-180'
-          )} />
-        </Button>
-      </div>
-      
-      <nav className="mt-8 px-2">
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.path}>
+        <div className="mt-8 flex-1 flex flex-col">
+          <nav className="flex-1 px-2 pb-4 space-y-1">
+            {navigation.map((item) => (
               <NavLink
-                to={item.path}
-                className={({ isActive }) => cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
-                  isActive
-                    ? 'bg-sidebar-accent text-accent'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
-                )}
+                key={item.name}
+                to={item.href}
+                className={({ isActive }) =>
+                  cn(
+                    'group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors',
+                    isActive
+                      ? 'bg-slate-800 text-white'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  )
+                }
               >
-                <span>{item.icon}</span>
-                {!collapsed && <span>{item.name}</span>}
+                <item.icon
+                  className="mr-3 flex-shrink-0 h-5 w-5"
+                  aria-hidden="true"
+                />
+                {item.name}
               </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      
-      <div className="absolute bottom-4 w-full px-4">
-        {!collapsed && (
-          <div className="px-3 py-2 bg-sidebar-accent/30 rounded-lg text-sidebar-foreground">
-            <p className="text-xs">ValuePilot v1.0</p>
-            <p className="text-xs opacity-70">Portfolio Manager</p>
-          </div>
-        )}
+            ))}
+          </nav>
+        </div>
       </div>
     </div>
   );
